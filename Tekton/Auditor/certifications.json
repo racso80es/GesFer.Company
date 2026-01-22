@@ -27,11 +27,11 @@
     },
     {
       "certification_id": "cert_20260122_190000",
-      "commit_hash": "N/A - Task Closure",
+      "commit_hash": "f0c9bf74164fdd5f42853728415745f8b412fdfe",
       "integrity_hash": "sha256:872fa745268d9b77e0ea55b7480ecd8e7412d16ba5a952ba20f5ad8919fd8c2f",
       "timestamp": "2026-01-22T19:00:00Z",
       "author": "auditor",
-      "message": "Certificación de cierre de tarea - Hash de integridad de todos los archivos en /Tekton",
+      "message": "Certificación de cierre de tarea - Hash de integridad de todos los archivos en /Tekton - Commit: feat: Infraestructura de gobernanza Triunvirato desplegada y certificada",
       "files_affected": [
         "Tekton/Rules/Golden_rules.md",
         "Tekton/Configuration/judge_config.json",
