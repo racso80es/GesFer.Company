@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "schema_version": "1.0.0",
     "created": "2026-01-22T18:52:00Z",
-    "last_updated": "2026-01-22T19:55:00Z",
+    "last_updated": "2026-01-22T20:15:00Z",
     "description": "Certificaciones de integridad local (AUDITOR_L1) - Hash de integridad para cada commit"
   },
   "certifications": [
@@ -148,17 +148,40 @@
         "hash_algorithm": "SHA256",
         "tormentosa_capability": "Capacidad de 'escuchar' activada mediante puente de almacenamiento"
       }
+    },
+    {
+      "certification_id": "cert_20260122_201500",
+      "commit_hash": "PENDING - feat/automation-audio-ingest",
+      "integrity_hash": "sha256:1c25d4173042572b8078dec91c392cd4376660753b6ee44b4b4da6c63112edb9",
+      "timestamp": "2026-01-22T20:15:00Z",
+      "author": "auditor",
+      "message": "SETUP_AUDIO_INGEST_AUTOMATION - Hash de integridad del script Ingesta_Audio.ps1. Puerto de persistencia de voz: descargas locales -> Storage/Audios -> Drive.",
+      "files_affected": [
+        "Storage/Scripts/Ingesta_Audio.ps1",
+        "Tekton/Auditor/certifications.json",
+        "Tekton/Logs/session_history.json"
+      ],
+      "auditor_signature": "AUDITOR_L1_SETUP_AUDIO_INGEST_20260122_201500",
+      "certification_status": "certified",
+      "rule_applied": "AUDITOR_L1",
+      "verification_details": {
+        "script_hash_source": "Storage/Scripts/Ingesta_Audio.ps1",
+        "hash_algorithm": "SHA256",
+        "scope": "audio_ingest_automation",
+        "task": "SETUP_AUDIO_INGEST_AUTOMATION",
+        "classification": "INFRASTRUCTURE / AUTOMATION"
+      }
     }
   ],
   "statistics": {
-    "total_certifications": 6,
-    "last_certification_id": "cert_20260122_195500",
+    "total_certifications": 7,
+    "last_certification_id": "cert_20260122_201500",
     "certifications_by_rule": {
-      "AUDITOR_L1": 3,
+      "AUDITOR_L1": 4,
       "AUDITOR_VOICE": 1,
       "STORAGE_INTEGRITY": 2
     },
-    "branch_final_state_signed": "feat/tekton-triunvirate-init"
+    "branch_final_state_signed": "feat/automation-audio-ingest"
   },
   "schema": {
     "certification": {
