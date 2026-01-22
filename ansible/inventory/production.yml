@@ -1,0 +1,21 @@
+---
+all:
+  children:
+    production:
+      hosts:
+        prod-company-01:
+          ansible_host: prod-company-01.example.com
+          ansible_user: deploy
+          deploy_user: deploy
+          deploy_path: /var/www/gesfer-company
+          app_port: 5000
+          aspnetcore_environment: Production
+        prod-company-02:
+          ansible_host: prod-company-02.example.com
+          ansible_user: deploy
+          deploy_user: deploy
+          deploy_path: /var/www/gesfer-company
+          app_port: 5000
+          aspnetcore_environment: Production
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

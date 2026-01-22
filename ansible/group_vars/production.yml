@@ -1,0 +1,5 @@
+---
+# Variables específicas para producción
+aspnetcore_environment: Production
+app_port: 5000
+log_level: Warning

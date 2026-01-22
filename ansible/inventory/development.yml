@@ -1,0 +1,14 @@
+---
+all:
+  children:
+    development:
+      hosts:
+        dev-company-01:
+          ansible_host: localhost
+          ansible_connection: local
+          deploy_user: deploy
+          deploy_path: /var/www/gesfer-company
+          app_port: 5000
+          aspnetcore_environment: Development
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

@@ -1,0 +1,14 @@
+---
+all:
+  children:
+    preproduction:
+      hosts:
+        preprod-company-01:
+          ansible_host: preprod-company-01.example.com
+          ansible_user: deploy
+          deploy_user: deploy
+          deploy_path: /var/www/gesfer-company
+          app_port: 5000
+          aspnetcore_environment: PreProduction
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

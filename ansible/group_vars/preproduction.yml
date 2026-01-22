@@ -1,0 +1,5 @@
+---
+# Variables específicas para preproducción
+aspnetcore_environment: PreProduction
+app_port: 5000
+log_level: Information

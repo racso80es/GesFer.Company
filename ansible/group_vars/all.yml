@@ -1,0 +1,17 @@
+---
+# Variables globales para todos los entornos
+app_name: gesfer-company
+docker_compose_version: "3.8"
+docker_image_name: "{{ app_name }}"
+docker_image_tag: "latest"
+
+# Configuración de despliegue
+deploy_to: "{{ deploy_path }}"
+keep_releases: 5
+shared_paths:
+  - logs
+  - config
+
+# Configuración de Docker
+docker_compose_file: docker-compose.yml
+docker_network: gesfer-network

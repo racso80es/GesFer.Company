@@ -1,0 +1,5 @@
+---
+# Variables específicas para desarrollo
+aspnetcore_environment: Development
+app_port: 5000
+log_level: Debug
