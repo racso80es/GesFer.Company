@@ -1,0 +1,27 @@
+---
+- name: Rollback GesFer Company Microservice
+  hosts: all
+  gather_facts: yes
+  
+  pre_tasks:
+    - name: Check if current symlink exists
+      stat:
+        path: "{{ deploy_to }}/current"
+      register: current_symlink
+      failed_when: false
+    
+    - name: Fail if no current deployment exists
+      fail:
+        msg: "No current deployment found at {{ deploy_to }}/current"
+      when: not current_symlink.stat.exists
+
+  roles:
+    - role: rollback
+  
+  post_tasks:
+    - name: Display rollback information
+      debug:
+        msg:
+          - "Rollback completed successfully"
+          - "Deploy path: {{ deploy_to }}"
+          - "Current release: {{ deploy_to }}/current"

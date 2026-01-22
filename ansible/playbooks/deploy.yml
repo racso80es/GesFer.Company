@@ -1,0 +1,54 @@
+---
+- name: Deploy GesFer Company Microservice
+  hosts: all
+  gather_facts: yes
+  vars:
+    release_version: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+  
+  pre_tasks:
+    - name: Ensure Docker is installed
+      package:
+        name: docker.io
+        state: present
+      when: ansible_connection != 'local'
+    
+    - name: Ensure Docker Compose is installed
+      get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+      when: ansible_connection != 'local'
+    
+    - name: Ensure deploy user exists
+      user:
+        name: "{{ deploy_user }}"
+        state: present
+        groups: docker
+        append: yes
+      when: ansible_connection != 'local'
+    
+    - name: Add deploy user to docker group
+      user:
+        name: "{{ deploy_user }}"
+        groups: docker
+        append: yes
+      when: ansible_connection != 'local'
+
+  roles:
+    - role: deploy
+      vars:
+        release_version: "{{ release_version }}"
+  
+  post_tasks:
+    - name: Include cleanup task
+      include_role:
+        name: deploy
+        tasks_from: cleanup
+    
+    - name: Display deployment information
+      debug:
+        msg:
+          - "Deployment completed successfully"
+          - "Release version: {{ release_version }}"
+          - "Deploy path: {{ deploy_to }}"
+          - "Current release: {{ deploy_to }}/current"
