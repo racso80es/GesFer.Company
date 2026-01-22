@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "schema_version": "1.0.0",
+    "created": "2026-01-22T18:52:00Z",
+    "last_updated": "2026-01-22T18:52:00Z",
+    "description": "Configuración de IOTA Testnet para persistencia de hitos principales (AUDITOR_L4)"
+  },
+  "iota_network": {
+    "network_type": "testnet",
+    "network_name": "IOTA Testnet",
+    "endpoints": {
+      "primary": "https://api.testnet.shimmer.network",
+      "fallback": [
+        "https://api.testnet.shimmer.network"
+      ]
+    },
+    "node_configuration": {
+      "timeout": 30,
+      "retry_attempts": 3,
+      "retry_delay": 5
+    }
+  },
+  "transaction_config": {
+    "tag": "GESFER_COMPANY_MILESTONE",
+    "data_type": "json",
+    "encryption": false,
+    "verification_required": true
+  },
+  "milestone_triggers": {
+    "merge_to_master": true,
+    "release_creation": true,
+    "critical_changes": true,
+    "major_version_updates": true
+  },
+  "credentials": {
+    "note": "Las credenciales deben ser configuradas según el entorno",
+    "storage_location": "environment_variables",
+    "required_variables": [
+      "IOTA_TESTNET_API_KEY",
+      "IOTA_WALLET_SEED"
+    ]
+  },
+  "audit_config": {
+    "rule_applied": "AUDITOR_L4",
+    "verification_enabled": true,
+    "log_transactions": true,
+    "transaction_log_location": "/Tekton/Logs/iota_transactions.json"
+  },
+  "schema": {
+    "milestone_payload": {
+      "milestone_id": "string (required, format: milestone_YYYYMMDD_HHMMSS)",
+      "milestone_type": "string (required, enum: [merge_to_master, release, critical_change, major_version])",
+      "integrity_hash": "string (required, sha256)",
+      "commit_hash": "string (required)",
+      "timestamp": "string (required, ISO 8601 format)",
+      "metadata": "object (required)",
+      "iota_transaction_id": "string (required, after persistence)"
+    }
+  }
+}
