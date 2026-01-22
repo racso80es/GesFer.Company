@@ -1,0 +1,99 @@
+---
+- name: Ensure deploy directory exists
+  file:
+    path: "{{ deploy_to }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: '0755'
+
+- name: Ensure shared directory exists
+  file:
+    path: "{{ deploy_to }}/shared"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: '0755'
+
+- name: Ensure shared paths exist
+  file:
+    path: "{{ deploy_to }}/shared/{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: '0755'
+  loop: "{{ shared_paths }}"
+
+- name: Create release directory
+  file:
+    path: "{{ deploy_to }}/releases/{{ release_version }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: '0755'
+
+- name: Copy application files to release directory
+  synchronize:
+    src: "{{ playbook_dir }}/../../"
+    dest: "{{ deploy_to }}/releases/{{ release_version }}/"
+    delete: yes
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=.ansible"
+      - "--exclude=ansible"
+      - "--exclude=*.md"
+      - "--exclude=.dockerignore"
+    delegate_to: "{{ inventory_hostname }}"
+
+- name: Create symlinks for shared paths
+  file:
+    src: "{{ deploy_to }}/shared/{{ item }}"
+    dest: "{{ deploy_to }}/releases/{{ release_version }}/{{ item }}"
+    state: link
+  loop: "{{ shared_paths }}"
+
+- name: Build Docker image
+  community.docker.docker_image:
+    name: "{{ docker_image_name }}"
+    tag: "{{ release_version }}"
+    source: build
+    build:
+      path: "{{ deploy_to }}/releases/{{ release_version }}"
+      dockerfile: Dockerfile
+    state: present
+
+- name: Update docker-compose.yml with environment variables
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ deploy_to }}/releases/{{ release_version }}/docker-compose.yml"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: '0644'
+
+- name: Stop and remove old containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ deploy_to }}/releases/{{ release_version }}"
+    state: absent
+  ignore_errors: yes
+
+- name: Start containers with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ deploy_to }}/releases/{{ release_version }}"
+    state: present
+    pull: no
+    build: yes
+    restart_policy: unless-stopped
+
+- name: Update current symlink
+  file:
+    src: "{{ deploy_to }}/releases/{{ release_version }}"
+    dest: "{{ deploy_to }}/current"
+    state: link
+    force: yes
+
+- name: Cleanup old releases
+  file:
+    path: "{{ deploy_to }}/releases/{{ item }}"
+    state: absent
+  loop: "{{ old_releases }}"
+  when: old_releases is defined and old_releases | length > 0

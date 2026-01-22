@@ -1,0 +1,11 @@
+---
+- name: Get list of releases
+  find:
+    paths: "{{ deploy_to }}/releases"
+    file_type: directory
+  register: releases_list
+
+- name: Set old releases fact
+  set_fact:
+    old_releases: "{{ releases_list.files | map(attribute='path') | map('basename') | sort | list[:-keep_releases|int] }}"
+  when: releases_list.files | length > keep_releases | int

@@ -1,0 +1,6 @@
+---
+# Defaults para el rol de deploy
+keep_releases: 5
+shared_paths:
+  - logs
+  - config

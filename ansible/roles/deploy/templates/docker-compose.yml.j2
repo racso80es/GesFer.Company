@@ -1,0 +1,24 @@
+services:
+  {{ app_name }}:
+    image: {{ docker_image_name }}:{{ release_version }}
+    container_name: {{ app_name }}
+    ports:
+      - "{{ app_port }}:{{ app_port }}"
+    environment:
+      - ASPNETCORE_ENVIRONMENT={{ aspnetcore_environment }}
+      - ASPNETCORE_URLS=http://+:{{ app_port }}
+    networks:
+      - {{ docker_network }}
+    volumes:
+      - {{ deploy_to }}/shared/logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{ app_port }}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  {{ docker_network }}:
+    driver: bridge

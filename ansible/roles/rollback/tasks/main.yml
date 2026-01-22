@@ -1,0 +1,44 @@
+---
+- name: Get list of releases
+  find:
+    paths: "{{ deploy_to }}/releases"
+    file_type: directory
+  register: releases_list
+
+- name: Set previous release version
+  set_fact:
+    previous_release: "{{ releases_list.files | map(attribute='path') | map('basename') | sort | list[-2] }}"
+  when: releases_list.files | length > 1
+
+- name: Fail if no previous release exists
+  fail:
+    msg: "No previous release found for rollback"
+  when: previous_release is not defined or previous_release == ""
+
+- name: Stop current containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ deploy_to }}/current"
+    state: absent
+  ignore_errors: yes
+
+- name: Update current symlink to previous release
+  file:
+    src: "{{ deploy_to }}/releases/{{ previous_release }}"
+    dest: "{{ deploy_to }}/current"
+    state: link
+    force: yes
+
+- name: Start containers with previous release
+  community.docker.docker_compose_v2:
+    project_src: "{{ deploy_to }}/current"
+    state: present
+    pull: no
+    build: no
+    restart_policy: unless-stopped
+
+- name: Display rollback information
+  debug:
+    msg:
+      - "Rollback completed successfully"
+      - "Previous release: {{ previous_release }}"
+      - "Current release path: {{ deploy_to }}/current"
