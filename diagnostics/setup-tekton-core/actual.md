@@ -2,24 +2,34 @@
 
 **Fecha de Implementación:** 2026-01-22  
 **Última Actualización:** 2026-01-22  
-**Estado:** ✅ Completado - Infraestructura de gobernanza (Ingeniero-Juez-Auditor) desplegada y certificada
+**Estado:** ✅ Completado - Infraestructura de gobernanza (Ingeniero-Juez-Auditor-Tormentosa), Auditor, voice_logs y Almacén Local desplegados y certificados
 
 ## Resumen
 
-Se ha implementado el sistema de gobernanza Tekton Core para el proyecto GesFer.Company. La gobernanza ahora reside en el sistema de archivos de Tekton. El sistema incluye auditoría completa, protección estricta de la rama master y el **Sistema del Juez** con tres niveles de validación y auditoría automática.
+Se ha implementado el sistema de gobernanza Tekton Core para el proyecto GesFer.Company. La gobernanza reside en el sistema de archivos de Tekton. Incluye auditoría completa, protección estricta de la rama master, el **Sistema del Juez**, el **Triunvirato** (Auditor L1/L3/L4), **AUDITOR_VOICE**, **Tormentosa** y el **Almacén Local** `/Storage` (regla **STORAGE_INTEGRITY**).
 
 ## Estructura Implementada
 
 ```
+Storage/               # Almacén Local (gitignored). Tormentosa ingesta audios aquí.
+├── Audios/            # Usuario pega audios para procesamiento
+├── Identity_Backups/
+└── Large_Assets/
+
 Tekton/
-├── Configuration/     # Configuraciones del sistema de gobernanza
-│   └── judge_config.json # Configuración del Sistema del Juez (niveles 2, 3, 4)
-├── Logs/              # Registros del sistema de gobernanza
-│   ├── session_history.json # Sistema de auditoría activo
-│   └── judge_audit.json # Veredictos y auditorías del Juez
-├── Rules/             # Reglas y directrices
-│   └── Golden_rules.md # Reglas de oro S+ Grade (v1.2.0 - con Sistema del Juez)
-└── Templates/         # Plantillas y patrones
+├── Auditor/
+│   ├── certifications.json
+│   ├── voice_logs/    # Registros AUDITOR_VOICE
+│   └── state_snapshots/
+├── Configuration/
+│   ├── judge_config.json
+│   └── iota_config.json
+├── Logs/
+│   ├── session_history.json
+│   └── judge_audit.json
+├── Rules/
+│   └── Golden_rules.md # S+ Grade, Triunvirato, AUDITOR_VOICE, STORAGE_INTEGRITY
+└── Templates/
 ```
 
 ## Archivos de Control
@@ -159,6 +169,15 @@ La IA está configurada para:
 - ✅ **judge_config.json creado con niveles 2, 3 y 4**
 - ✅ **judge_audit.json inicializado para veredictos**
 - ✅ **Reglas de oro del Juez documentadas (RULE_MASTER_PROTECTION, JUDGE_SENTINEL_ALWAYS, JUDGE_ENV_PR, JUDGE_SHADOW_RECURRENCE)**
+- ✅ **Triunvirato (AUDITOR_L1, L3, L4), AUDITOR_VOICE, voice_logs**
+- ✅ **Almacén Local /Storage (Audios, Identity_Backups, Large_Assets), STORAGE_INTEGRITY, Tormentosa**
+- ✅ **/Storage/ y archivos temporales/caché en .gitignore**
+
+## Almacén Local y Tormentosa (STORAGE_INTEGRITY)
+
+- **Storage:** Raíz `/Storage` con `Audios`, `Identity_Backups`, `Large_Assets`. Excluido del repositorio (`.gitignore`).
+- **Tormentosa:** Lee archivos de `/Storage` para procesar audios.
+- **Auditor:** Certifica solo **hashes** de los archivos en Storage; **nunca** contenido binario.
 
 ## Próximos Pasos
 

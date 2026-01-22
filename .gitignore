@@ -36,3 +36,14 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Storage (Almacén Local - Tormentosa)
+# Audios, backups de identidad y assets grandes; nunca se suben al repositorio
+/Storage/
+
+# Sesión temporal y caché
+.tmp.driveupload/
+.tmp/
+*.tmp
+*.cache
+.cache/

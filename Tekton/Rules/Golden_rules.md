@@ -264,6 +264,42 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `AUDITOR_L4`
 
+##### AUDITOR_VOICE: Registro y Certificación de Análisis de Audio
+
+**OBLIGATORIEDAD:** Siempre que se analice un audio, el Auditor debe crear registro, sincronizar y certificar.
+
+**Requisitos:**
+1. **Crear registro:** Crear un registro en `/Tekton/Auditor/voice_logs/` por cada audio analizado.
+2. **Sincronizar:** El registro debe contener la **síntesis técnica** y el **impacto en el proyecto**.
+3. **Certificar:** El Auditor debe generar un **hash** que una ese audio con el próximo commit de la rama.
+
+**Formato requerido del registro en voice_logs:**
+```json
+{
+  "voice_log_id": "voice_YYYYMMDD_HHMMSS",
+  "timestamp": "ISO 8601 format",
+  "audio_context": "string",
+  "technical_synthesis": "string",
+  "impact_on_project": "string",
+  "auditor_certification_hash": "sha256_hash",
+  "linked_commit": "commit_sha_or_PENDING",
+  "rule_applied": "AUDITOR_VOICE"
+}
+```
+
+**Identificador de Regla:** `AUDITOR_VOICE`
+
+#### 8.7. Protocolo de Ingesta - Integridad del Almacén (STORAGE_INTEGRITY)
+
+**OBLIGATORIEDAD:** Tormentosa debe leer los archivos de `/Storage` para procesar audios, pero el Auditor solo certificará sus **hashes**, nunca su contenido binario.
+
+**Requisitos:**
+- **Tormentosa:** Puede leer y procesar archivos en `/Storage` (p. ej. `/Storage/Audios`) para análisis de audio.
+- **Auditor:** Certifica únicamente **hashes** de integridad de los archivos en Storage; **nunca** persiste, versiona ni incluye contenido binario en el repositorio.
+- **Almacén local:** `/Storage` está excluido del repositorio (`.gitignore`). Estructura: `/Storage/Audios`, `/Storage/Identity_Backups`, `/Storage/Large_Assets`.
+
+**Identificador de Regla:** `STORAGE_INTEGRITY`
+
 ---
 
 ## Notas de Implementación

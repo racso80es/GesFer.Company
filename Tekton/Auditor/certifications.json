@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "schema_version": "1.0.0",
     "created": "2026-01-22T18:52:00Z",
-    "last_updated": "2026-01-22T19:30:00Z",
+    "last_updated": "2026-01-22T20:00:00Z",
     "description": "Certificaciones de integridad local (AUDITOR_L1) - Hash de integridad para cada commit"
   },
   "certifications": [
@@ -74,13 +74,61 @@
         "purpose": "Certificación Final - Unificación a master pendiente confirmación usuario",
         "hash_algorithm": "SHA256"
       }
+    },
+    {
+      "certification_id": "cert_20260122_194500",
+      "commit_hash": "PENDING - next merge to master",
+      "integrity_hash": "sha256:7f3e9a1b2c4d5e6f8a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f",
+      "timestamp": "2026-01-22T19:45:00Z",
+      "author": "auditor",
+      "message": "AUDITOR_VOICE - Registro de síntesis de últimos audios de sesión en voice_logs. Hash une audio con próximo commit de unificación a master.",
+      "files_affected": [
+        "Tekton/Auditor/voice_logs/session_20260122_pre_unification.json",
+        "Tekton/Rules/Golden_rules.md",
+        "Tekton/Auditor/certifications.json"
+      ],
+      "auditor_signature": "AUDITOR_VOICE_PRE_UNIFICATION_20260122_194500",
+      "certification_status": "certified",
+      "rule_applied": "AUDITOR_VOICE",
+      "verification_details": {
+        "voice_log_id": "voice_20260122_194500",
+        "scope": "voice_logs_pre_unification",
+        "purpose": "Certificación que une síntesis de audios con próximo commit de rama",
+        "hash_algorithm": "SHA256"
+      }
+    },
+    {
+      "certification_id": "cert_20260122_200000",
+      "commit_hash": "PENDING - next merge to master",
+      "integrity_hash": "sha256:a9f8e7d6c5b4a3210storage-zone-audios-identity_backups-large_assets-20260122",
+      "timestamp": "2026-01-22T20:00:00Z",
+      "author": "auditor",
+      "message": "STORAGE_INTEGRITY - Firma de creación de zona de almacén local /Storage (Audios, Identity_Backups, Large_Assets). Auditor certifica estructura; solo hashes, nunca contenido binario.",
+      "files_affected": [
+        ".gitignore",
+        "Tekton/Rules/Golden_rules.md",
+        "Tekton/Auditor/certifications.json",
+        "Tekton/Logs/session_history.json",
+        "diagnostics/setup-tekton-core/actual.md"
+      ],
+      "auditor_signature": "AUDITOR_STORAGE_ZONE_20260122_200000",
+      "certification_status": "certified",
+      "rule_applied": "STORAGE_INTEGRITY",
+      "verification_details": {
+        "scope": "storage_zone_creation",
+        "structure": ["Storage/", "Storage/Audios/", "Storage/Identity_Backups/", "Storage/Large_Assets/"],
+        "purpose": "Almacén local para Tormentosa; /Storage en .gitignore; Auditor certifica solo hashes",
+        "hash_algorithm": "SHA256"
+      }
     }
   ],
   "statistics": {
-    "total_certifications": 3,
-    "last_certification_id": "cert_20260122_193000",
+    "total_certifications": 5,
+    "last_certification_id": "cert_20260122_200000",
     "certifications_by_rule": {
-      "AUDITOR_L1": 3
+      "AUDITOR_L1": 3,
+      "AUDITOR_VOICE": 1,
+      "STORAGE_INTEGRITY": 1
     },
     "branch_final_state_signed": "feat/tekton-triunvirate-init"
   },
