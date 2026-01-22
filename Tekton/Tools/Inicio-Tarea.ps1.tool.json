@@ -19,7 +19,7 @@
     "script": "Tekton/Tools/Inicio-Tarea.ps1",
     "type": "powershell",
     "created": "2026-01-22T00:00:00Z",
-    "last_updated": "2026-01-22T00:00:00Z",
+    "last_updated": "2026-01-23T00:05:00Z",
     "output_format": "JSON (success, branch, diagnostics_path, actual_md_path, dictionary_used, validation)",
     "validation_logic": "Carga DICTIONARY.json; falla si TaskName contiene forbidden_synonyms (ENTITY_COMPANY)",
     "observability": [
