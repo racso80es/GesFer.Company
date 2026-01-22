@@ -120,6 +120,17 @@ try {
         exit 1
     }
 
+    if (-not $Simulate) {
+        Write-TaeStep "Verificando estado limpio del repositorio (git_clean_status)."
+        $gitStatus = git status --porcelain 2>$null
+        if ($gitStatus) {
+            Write-TaeInfo "El repositorio tiene cambios sin commitear. Limpie el working directory antes de crear una nueva rama."
+            Out-InicioJsonResult -Success $false -ErrorMessage "Working directory is not clean. Commit or stash changes before creating a new branch."
+            exit 1
+        }
+        Write-TaeInfo "Validación de git_clean_status: superada."
+    }
+
     $dictPath = Get-DictionaryPath -Root $root
     Write-TaeStep "Cargando Motor de Reglas: DICTIONARY.json."
     $forbidden = Get-ForbiddenSynonyms -DictPath $dictPath
