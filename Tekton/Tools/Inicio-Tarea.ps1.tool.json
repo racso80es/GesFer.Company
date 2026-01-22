@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-01-22T00:00:00Z",
+    "description": "Manifiesto de metadatos para la herramienta TAE Inicio-Tarea"
+  },
+  "tool": {
+    "id": "inicio-tarea",
+    "name": "Inicio-Tarea",
+    "script": "Tekton/Tools/Inicio-Tarea.ps1",
+    "type": "powershell",
+    "purpose": "Arranque de tareas: creación de rama feat/<TaskName>, carpeta de diagnóstico e actual.md. Autovalidante contra DICTIONARY.json.",
+    "parameters": [
+      { "name": "TaskName", "required": true, "description": "Nombre de la tarea (no puede contener términos prohibidos)" },
+      { "name": "BaseBranch", "required": false, "default": "main", "description": "Rama base" }
+    ],
+    "output": "JSON (success, branch, diagnostics_path, actual_md_path, dictionary_used, validation)",
+    "validation": "Carga DICTIONARY.json; falla si TaskName contiene forbidden_synonyms (ENTITY_COMPANY)",
+    "observability": ["[TAE-STEP] creación de rama", "[TAE-STEP] carpeta de diagnóstico", "[TAE-STEP] inicialización actual.md"]
+  }
+}
