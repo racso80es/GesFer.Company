@@ -2,9 +2,9 @@
 
 ## Directrices S+ Grade
 
-> **Estado:** Activo con sistema de auditoría, protección de master y Sistema del Juez
+> **Estado:** Activo con sistema de auditoría, protección de master, Sistema del Juez y Triunvirato
 > **Última actualización:** 2026-01-22
-> **Versión:** 1.2.0
+> **Versión:** 1.3.0
 
 Este archivo contiene las reglas de oro y directrices de nivel S+ para el desarrollo del microservicio GesFer.Company.
 
@@ -179,6 +179,90 @@ _Sección preparada para directrices de DevOps S+ Grade_
 - Análisis de impacto de cambios en lógica externa
 
 **Identificador de Regla:** `JUDGE_SHADOW_RECURRENCE`
+
+#### 8.6. Sistema del Triunvirato - Leyes del Auditor
+
+**ESTADO:** Activo - Leyes Inmutables del Triunvirato
+
+##### AUDITOR_L1 (Commits): Hash de Integridad Local
+
+**OBLIGATORIEDAD:** Generar hash de integridad local en cada commit.
+
+**Requisitos:**
+- Cada commit debe generar un hash de integridad local
+- El hash debe ser almacenado en `/Tekton/Auditor/certifications.json`
+- El hash debe incluir: contenido del commit, timestamp, autor, mensaje
+- El hash debe ser verificable localmente antes de cualquier push
+- Sin hash de integridad, el commit no puede ser considerado válido
+
+**Formato requerido:**
+```json
+{
+  "certification_id": "cert_YYYYMMDD_HHMMSS",
+  "commit_hash": "git_commit_sha",
+  "integrity_hash": "sha256_hash",
+  "timestamp": "ISO 8601 format",
+  "author": "string",
+  "message": "string",
+  "files_affected": ["array of strings"],
+  "auditor_signature": "string"
+}
+```
+
+**Identificador de Regla:** `AUDITOR_L1`
+
+##### AUDITOR_L3 (PRs): Certificación de Manifiesto de Estado
+
+**OBLIGATORIEDAD:** Certificar el manifiesto de estado del entorno (versiones/config) antes de cualquier Merge.
+
+**Requisitos:**
+- Antes de cualquier merge a `master`, se debe generar un manifiesto de estado completo
+- El manifiesto debe incluir: versiones de dependencias, configuración del entorno, estado de servicios
+- El manifiesto debe ser almacenado en `/Tekton/Auditor/state_snapshots/`
+- El manifiesto debe ser certificado por el Auditor antes del merge
+- Sin certificación del manifiesto, el merge está bloqueado
+
+**Formato requerido:**
+```json
+{
+  "snapshot_id": "snapshot_YYYYMMDD_HHMMSS",
+  "pr_number": "integer",
+  "timestamp": "ISO 8601 format",
+  "environment_state": {
+    "dependencies": {},
+    "configuration": {},
+    "services": {},
+    "versions": {}
+  },
+  "auditor_certification": {
+    "certified": "boolean",
+    "certification_hash": "string",
+    "certified_by": "auditor",
+    "certification_timestamp": "ISO 8601 format"
+  }
+}
+```
+
+**Identificador de Regla:** `AUDITOR_L3`
+
+##### AUDITOR_L4 (IOTA): Persistencia en Testnet de IOTA
+
+**OBLIGATORIEDAD:** Los hitos principales se persistirán en la Testnet de IOTA.
+
+**Requisitos:**
+- Los hitos principales (merges a master, releases, cambios críticos) deben persistirse en IOTA Testnet
+- La configuración de IOTA debe estar en `/Tekton/Configuration/iota_config.json`
+- Cada hito debe generar una transacción en IOTA con el hash de integridad
+- La transacción debe ser verificable en la Testnet
+- Sin persistencia en IOTA, el hito no puede ser considerado completo
+
+**Configuración requerida:**
+- Endpoint de la Testnet de IOTA
+- Credenciales de acceso (si aplica)
+- Configuración de nodos
+- Parámetros de transacción
+
+**Identificador de Regla:** `AUDITOR_L4`
 
 ---
 
