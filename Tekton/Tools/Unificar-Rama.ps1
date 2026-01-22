@@ -194,7 +194,7 @@ try {
     # ---- Registro de auditoría ----
     Write-TaeStep "Registro de auditoría en docs/audits/."
 
-    $auditsDir = Join-Path $root "docs" "audits"
+    $auditsDir = Join-Path (Join-Path $root "docs") "audits"
     if (-not (Test-Path $auditsDir)) { New-Item -ItemType Directory -Path $auditsDir -Force | Out-Null }
 
     $stamp = if ([string]::IsNullOrWhiteSpace($AuditStamp)) { "STAMP_$(Get-Date -Format 'yyyyMMdd_HHmmss')" } else { $AuditStamp }
