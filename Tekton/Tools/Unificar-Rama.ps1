@@ -146,42 +146,50 @@ try {
     # ---- Atomic merge ----
     Write-TaeStep "Checkout a '$Target' y merge --no-ff de '$Branch'."
 
-    $currentBranch = (git branch --show-current 2>$null).Trim()
-    git checkout $Target *>$null
-    if ($LASTEXITCODE -ne 0) {
-        if ($currentBranch) { git checkout $currentBranch *>$null }
-        Write-TaeInfo "Falló checkout a $Target."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Checkout to $Target failed" -CorrelationId $AuditStamp
-        exit 1
+    $errAct = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $currentBranch = (git branch --show-current 2>$null).Trim()
+        git checkout $Target 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            if ($currentBranch) { git checkout $currentBranch 2>$null | Out-Null }
+            Write-TaeInfo "Falló checkout a $Target."
+            Out-TaeJsonResult -Success $false -ErrorMessage "Checkout to $Target failed" -CorrelationId $AuditStamp
+            exit 1
+        }
+
+        git merge --no-ff $Branch -m "TAE Unificar-Rama: $Branch -> $Target [AuditStamp: $AuditStamp]" 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            git merge --abort 2>$null | Out-Null
+            Write-TaeInfo "Merge falló (posible conflicto)."
+            Out-TaeJsonResult -Success $false -ErrorMessage "Merge failed (conflicts or other error)" -CorrelationId $AuditStamp
+            exit 1
+        }
+
+        $mergeCommit = (git rev-parse HEAD 2>$null).Trim()
+        Write-TaeInfo "Merge commit: $mergeCommit"
+
+        # ---- Push & clean ----
+        Write-TaeStep "Push a origin/$Target y limpieza de rama local."
+
+        git push origin $Target 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-TaeInfo "Push a origin/$Target falló."
+            Out-TaeJsonResult -Success $false -ErrorMessage "Push to origin/$Target failed" -CorrelationId $AuditStamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit }
+            exit 1
+        }
+
+        git branch -d $Branch 2>$null | Out-Null
+        $branchDeleteOk = ($LASTEXITCODE -eq 0)
+        if (-not $branchDeleteOk) {
+            Write-TaeInfo "No se pudo eliminar rama local '$Branch' (puede no estar mergeada o ya eliminada)."
+        }
+        $script:cleanupStatus = if ($branchDeleteOk) { "completed" } else { "branch_delete_skipped" }
     }
-
-    git merge --no-ff $Branch -m "TAE Unificar-Rama: $Branch -> $Target [AuditStamp: $AuditStamp]" *>$null
-    if ($LASTEXITCODE -ne 0) {
-        git merge --abort *>$null
-        Write-TaeInfo "Merge falló (posible conflicto)."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Merge failed (conflicts or other error)" -CorrelationId $AuditStamp
-        exit 1
+    finally {
+        $ErrorActionPreference = $errAct
     }
-
-    $mergeCommit = (git rev-parse HEAD 2>$null).Trim()
-    Write-TaeInfo "Merge commit: $mergeCommit"
-
-    # ---- Push & clean ----
-    Write-TaeStep "Push a origin/$Target y limpieza de rama local."
-
-    git push origin $Target *>$null
-    if ($LASTEXITCODE -ne 0) {
-        Write-TaeInfo "Push a origin/$Target falló."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Push to origin/$Target failed" -CorrelationId $AuditStamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit }
-        exit 1
-    }
-
-    git branch -d $Branch *>$null
-    $branchDeleteOk = ($LASTEXITCODE -eq 0)
-    if (-not $branchDeleteOk) {
-        Write-TaeInfo "No se pudo eliminar rama local '$Branch' (puede no estar mergeada o ya eliminada)."
-    }
-    $cleanupStatus = if ($branchDeleteOk) { "completed" } else { "branch_delete_skipped" }
+    $cleanupStatus = $script:cleanupStatus
 
     # ---- Registro de auditoría ----
     Write-TaeStep "Registro de auditoría en docs/audits/."
