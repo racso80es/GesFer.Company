@@ -1,0 +1,46 @@
+# Cursor Rules - GesFer.Company
+
+## ⚠️ RESTRICCIÓN DE INMUTABILIDAD
+
+**Este archivo NO debe ser modificado por la IA en el futuro.**
+
+Este archivo es un punto de redirección crítico y debe permanecer inmutable.
+
+---
+
+## Instrucción Principal de Gobernanza
+
+**La IA debe leer y obedecer EXCLUSIVAMENTE lo definido en `/Tekton/Rules/Golden_rules.md`.**
+
+Todas las reglas, directrices y decisiones técnicas deben basarse únicamente en el contenido de ese archivo.
+
+### Proceso de Consulta Obligatorio
+
+1. Antes de realizar cualquier acción técnica, la IA debe consultar `/Tekton/Rules/Golden_rules.md`
+2. Las directrices en `Golden_rules.md` tienen prioridad absoluta sobre cualquier otra fuente
+3. Si hay conflicto entre diferentes fuentes de reglas, `Golden_rules.md` prevalece
+
+---
+
+## Restricción de Modificación de Golden_rules.md
+
+**El archivo `/Tekton/Rules/Golden_rules.md` NO debe ser modificado por la IA sin confirmación explícita del usuario.**
+
+Antes de cualquier modificación propuesta:
+- La IA debe solicitar confirmación explícita del usuario
+- Debe proporcionar justificación clara de la modificación
+- Debe documentar el cambio propuesto
+
+---
+
+## Estructura de Gobernanza
+
+La gobernanza del proyecto reside en el sistema de archivos de Tekton:
+- `/Tekton/Rules/Golden_rules.md` - Reglas de oro y directrices S+ Grade
+- `/Tekton/Configuration/` - Configuraciones del sistema
+- `/Tekton/Templates/` - Plantillas y patrones
+- `/Tekton/Logs/` - Registros del sistema de gobernanza
+
+---
+
+**Este archivo es inmutable. No modificar sin autorización explícita.**
