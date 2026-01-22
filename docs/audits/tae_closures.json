@@ -2,7 +2,7 @@
     "metadata":  {
                      "description":  "Registro de cierres TAE (Unificar-Rama) vinculados al Latido actual",
                      "version":  "1.0.0",
-                     "last_updated":  "2026-01-22T23:21:44.9411188+01:00"
+                     "last_updated":  "2026-01-23T00:39:32.7602057+01:00"
                  },
     "closures":  [
                      {
@@ -30,6 +30,19 @@
                          "cleanup":  "completed",
                          "audit_stamp":  "LATIDO_02_ESTANDARIZACION_TEKTON",
                          "latido":  "LATIDO_02_ESTANDARIZACION_TEKTON"
+                     },
+                     {
+                         "closure_id":  "LATIDO_03_NORMALIZACION_LOGS",
+                         "approve_hash":  "S-GRADE_LOG_SYSTEM_READY",
+                         "timestamp":  "2026-01-23T00:39:32.6800558+01:00",
+                         "merge_details":  {
+                                               "from":  "feat/motor-arranque-tae-001",
+                                               "to":  "main",
+                                               "commit":  "a874a857d7ef4fb0e7fcb3018e3364f0696357d7"
+                                           },
+                         "cleanup":  "completed",
+                         "audit_stamp":  "LATIDO_03_NORMALIZACION_LOGS",
+                         "latido":  "LATIDO_03_NORMALIZACION_LOGS"
                      }
                  ]
 }
