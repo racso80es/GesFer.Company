@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "tool_id": "TAE-CORE-NORMALIZER",
+  "name": "Write-TaeResult",
+  "version": "1.0.0",
+  "description": "Normalizador de salida TAE. Genera JSON estructurado para procesamiento por IA y persiste en activity_stream.jsonl para auditoría y análisis.",
+  "parameters": {
+    "SourceTool": "Identificador de la herramienta TAE (ej: TAE-001-START, TAE-002-UNIFY)",
+    "Status": "Estado de la operación: Success, Failure, o Warning",
+    "Payload": "Hashtable con los datos específicos del resultado de la herramienta",
+    "AuditStamp": "Sello de auditoría / Latido / Correlation ID (opcional)"
+  },
+  "safety_checks": [
+    "json_validation",
+    "stream_file_integrity"
+  ],
+  "standard": "S-Grade-TAE",
+  "metadata": {
+    "script": "Tekton/Tools/Write-TaeResult.ps1",
+    "type": "powershell",
+    "created": "2026-01-23T00:10:00Z",
+    "last_updated": "2026-01-23T00:10:00Z",
+    "output_format": "JSON (consola) + JSONL (activity_stream.jsonl)",
+    "validation_logic": "Valida parámetros requeridos y estructura de Payload. Garantiza formato JSON válido.",
+    "observability": [
+      "[TAE-CORE] JSON emitido a consola",
+      "[TAE-CORE] Entrada añadida a activity_stream.jsonl"
+    ],
+    "contract": {
+      "input": {
+        "SourceTool": "string (required)",
+        "Status": "enum: [Success, Failure, Warning] (required)",
+        "Payload": "hashtable (required)",
+        "AuditStamp": "string (optional)"
+      },
+      "output": {
+        "console": "JSON compacto para procesamiento por IA",
+        "stream": "JSON Lines (JSONL) en Tekton/Logs/activity_stream.jsonl"
+      },
+      "format": {
+        "console_json": {
+          "source_tool": "string",
+          "status": "string",
+          "timestamp": "ISO 8601",
+          "payload": "object",
+          "audit_stamp": "string (optional)"
+        },
+        "stream_jsonl": "Una línea JSON por entrada, formato idéntico a console_json"
+      }
+    }
+  }
+}

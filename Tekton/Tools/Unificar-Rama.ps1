@@ -48,7 +48,7 @@ function Get-RepoRoot {
     return $r.Trim()
 }
 
-function Out-TaeJsonResult {
+function Invoke-WriteTaeResult {
     param(
         [bool] $Success,
         [string] $CorrelationId = "",
@@ -57,16 +57,33 @@ function Out-TaeJsonResult {
         [string] $NextStep = "",
         [string] $ErrorMessage = ""
     )
-    $obj = @{
-        success = $Success
-        correlation_id = $CorrelationId
+    
+    $root = Get-RepoRoot
+    $writeTaeResultPath = if ($root) {
+        Join-Path (Join-Path (Join-Path $root "Tekton") "Tools") "Write-TaeResult.ps1"
+    } else {
+        "Tekton/Tools/Write-TaeResult.ps1"
+    }
+    
+    $status = if ($Success) { "Success" } else { "Failure" }
+    
+    $payload = @{
         merge_details = $MergeDetails
         cleanup = $Cleanup
         next_step = $NextStep
     }
-    if ($ErrorMessage) { $obj["error"] = $ErrorMessage }
-    $json = $obj | ConvertTo-Json -Compress
-    Write-Output $json
+    
+    if ($ErrorMessage) {
+        $payload["error"] = $ErrorMessage
+    }
+    
+    if (-not [string]::IsNullOrWhiteSpace($CorrelationId)) {
+        $auditStamp = $CorrelationId
+    } else {
+        $auditStamp = ""
+    }
+    
+    & $writeTaeResultPath -SourceTool "TAE-002-UNIFY" -Status $status -Payload $payload -AuditStamp $auditStamp
 }
 
 function Test-GitClean {
@@ -91,7 +108,7 @@ try {
     $root = Get-RepoRoot
     if (-not $root) {
         Write-TaeInfo "No se detecta repositorio git."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Not a git repository" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Not a git repository" -CorrelationId $AuditStamp
         exit 1
     }
 
@@ -99,7 +116,7 @@ try {
         $Branch = (git branch --show-current 2>$null).Trim()
         if ([string]::IsNullOrWhiteSpace($Branch)) {
             Write-TaeInfo "No se pudo obtener la rama actual."
-            Out-TaeJsonResult -Success $false -ErrorMessage "Could not determine current branch" -CorrelationId $AuditStamp
+            Invoke-WriteTaeResult -Success $false -ErrorMessage "Could not determine current branch" -CorrelationId $AuditStamp
             exit 1
         }
         Write-TaeInfo "Rama origen (por defecto): $Branch"
@@ -107,7 +124,7 @@ try {
 
     if ($Branch -eq $Target) {
         Write-TaeInfo "Branch y Target no pueden ser iguales."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Branch and Target must differ" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Branch and Target must differ" -CorrelationId $AuditStamp
         exit 1
     }
 
@@ -116,28 +133,28 @@ try {
 
     if (-not (Test-GitClean)) {
         Write-TaeInfo "Hay cambios pendientes (working tree o índice)."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Working tree or index has uncommitted changes" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Working tree or index has uncommitted changes" -CorrelationId $AuditStamp
         exit 1
     }
 
     $branchExists = git rev-parse --verify $Branch 2>$null
     if (-not $branchExists) {
         Write-TaeInfo "La rama origen '$Branch' no existe."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Branch '$Branch' does not exist" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Branch '$Branch' does not exist" -CorrelationId $AuditStamp
         exit 1
     }
 
     $targetExists = git rev-parse --verify $Target 2>$null
     if (-not $targetExists) {
         Write-TaeInfo "La rama destino '$Target' no existe."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Target '$Target' does not exist" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Target '$Target' does not exist" -CorrelationId $AuditStamp
         exit 1
     }
 
     $synced = Test-BranchSynced -Br $Branch
     if (-not $synced) {
         Write-TaeInfo "Rama '$Branch' no está sincronizada con origin/$Branch."
-        Out-TaeJsonResult -Success $false -ErrorMessage "Branch '$Branch' is not synced with origin" -CorrelationId $AuditStamp
+        Invoke-WriteTaeResult -Success $false -ErrorMessage "Branch '$Branch' is not synced with origin" -CorrelationId $AuditStamp
         exit 1
     }
 
@@ -154,7 +171,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             if ($currentBranch) { git checkout $currentBranch 2>$null | Out-Null }
             Write-TaeInfo "Falló checkout a $Target."
-            Out-TaeJsonResult -Success $false -ErrorMessage "Checkout to $Target failed" -CorrelationId $AuditStamp
+            Invoke-WriteTaeResult -Success $false -ErrorMessage "Checkout to $Target failed" -CorrelationId $AuditStamp
             exit 1
         }
 
@@ -162,7 +179,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             git merge --abort 2>$null | Out-Null
             Write-TaeInfo "Merge falló (posible conflicto)."
-            Out-TaeJsonResult -Success $false -ErrorMessage "Merge failed (conflicts or other error)" -CorrelationId $AuditStamp
+            Invoke-WriteTaeResult -Success $false -ErrorMessage "Merge failed (conflicts or other error)" -CorrelationId $AuditStamp
             exit 1
         }
 
@@ -175,7 +192,7 @@ try {
         git push origin $Target 2>$null | Out-Null
         if ($LASTEXITCODE -ne 0) {
             Write-TaeInfo "Push a origin/$Target falló."
-            Out-TaeJsonResult -Success $false -ErrorMessage "Push to origin/$Target failed" -CorrelationId $AuditStamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit }
+            Invoke-WriteTaeResult -Success $false -ErrorMessage "Push to origin/$Target failed" -CorrelationId $AuditStamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit }
             exit 1
         }
 
@@ -246,11 +263,11 @@ try {
     Write-TaeInfo "Auditoría registrada en docs/audits/tae_closures.json (Latido: $stamp)."
 
     Write-TaeStep "Unificación completada."
-    Out-TaeJsonResult -Success $true -CorrelationId $stamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit } -Cleanup $cleanupStatus -NextStep "Ready for next beat"
+    Invoke-WriteTaeResult -Success $true -CorrelationId $stamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit } -Cleanup $cleanupStatus -NextStep "Ready for next beat"
     exit 0
 }
 catch {
     Write-TaeInfo "Error crítico: $($_.Exception.Message)"
-    Out-TaeJsonResult -Success $false -ErrorMessage $_.Exception.Message -CorrelationId $AuditStamp
+    Invoke-WriteTaeResult -Success $false -ErrorMessage $_.Exception.Message -CorrelationId $AuditStamp
     exit 1
 }
