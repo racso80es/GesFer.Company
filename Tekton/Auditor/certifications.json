@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "schema_version": "1.0.0",
     "created": "2026-01-22T18:52:00Z",
-    "last_updated": "2026-01-22T20:00:00Z",
+    "last_updated": "2026-01-22T19:55:00Z",
     "description": "Certificaciones de integridad local (AUDITOR_L1) - Hash de integridad para cada commit"
   },
   "certifications": [
@@ -120,15 +120,43 @@
         "purpose": "Almacén local para Tormentosa; /Storage en .gitignore; Auditor certifica solo hashes",
         "hash_algorithm": "SHA256"
       }
+    },
+    {
+      "certification_id": "cert_20260122_195500",
+      "commit_hash": "PENDING - next merge to master",
+      "integrity_hash": "sha256:tormentosa-audio-ingesta-automatizada-script-sync-drive-storage-20260122-195500",
+      "timestamp": "2026-01-22T19:55:00Z",
+      "author": "auditor",
+      "message": "TORMENTOSA_INGESTA_AUDIO - Flujo de ingesta automatizada de audio certificado. Script de sincronización desplegado. Capacidad de 'escuchar' activada en Tormentosa.",
+      "files_affected": [
+        "Storage/Scripts/Ingesta_Audio.ps1",
+        "Tekton/Identity/Tormentosa/adaptive_memory.md",
+        ".gitignore",
+        "Tekton/Auditor/certifications.json"
+      ],
+      "auditor_signature": "AUDITOR_TORMENTOSA_INGESTA_AUDIO_20260122_195500",
+      "certification_status": "certified",
+      "rule_applied": "STORAGE_INTEGRITY",
+      "verification_details": {
+        "scope": "audio_ingestion_automation",
+        "components": [
+          "Storage/Scripts/Ingesta_Audio.ps1 - Script de monitoreo y sincronización",
+          "Tekton/Identity/Tormentosa/adaptive_memory.md - Registro de capacidad de 'escuchar'",
+          ".gitignore - Protección de archivos temporales y logs"
+        ],
+        "purpose": "Flujo automatizado de ingesta de audio: monitoriza carpeta origen, copia a Drive local y Storage/Audios, renombra con formato AUD_YYYYMMDD_HHMM.m4a",
+        "hash_algorithm": "SHA256",
+        "tormentosa_capability": "Capacidad de 'escuchar' activada mediante puente de almacenamiento"
+      }
     }
   ],
   "statistics": {
-    "total_certifications": 5,
-    "last_certification_id": "cert_20260122_200000",
+    "total_certifications": 6,
+    "last_certification_id": "cert_20260122_195500",
     "certifications_by_rule": {
       "AUDITOR_L1": 3,
       "AUDITOR_VOICE": 1,
-      "STORAGE_INTEGRITY": 1
+      "STORAGE_INTEGRITY": 2
     },
     "branch_final_state_signed": "feat/tekton-triunvirate-init"
   },
