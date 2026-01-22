@@ -1,0 +1,26 @@
+services:
+  gesfer-company:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gesfer-company
+    ports:
+      - "${APP_PORT:-5000}:${APP_PORT:-5000}"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - ASPNETCORE_URLS=http://+:${APP_PORT:-5000}
+    networks:
+      - gesfer-network
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-5000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  gesfer-network:
+    driver: bridge
