@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-01-22T00:00:00Z",
+    "description": "Manifiesto de metadatos para la herramienta Close-Task (cierre de tarea / pre-Unificar-Rama)"
+  },
+  "tool": {
+    "id": "close-task",
+    "name": "Close-Task",
+    "script": "Tekton/Tools/Close-Task.ps1",
+    "type": "powershell",
+    "purpose": "Cierre de tarea: preparación para unificación (actualización de diagnóstico, generación de AuditStamp, integración con Unificar-Rama).",
+    "parameters": [
+      { "name": "AuditStamp", "required": false, "description": "Sello de auditoría" },
+      { "name": "ApproveHash", "required": false, "description": "Hash del Juez" }
+    ],
+    "output": "JSON (success, audit_stamp, next_step)",
+    "validation": "Validación contra DICTIONARY.json en contenido afectado",
+    "status": "Manifiesto preparado; script pendiente de implementación"
+  }
+}

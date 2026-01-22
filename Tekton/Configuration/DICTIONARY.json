@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "schema_version": "1.0.0",
+    "created": "2026-01-22T00:00:00Z",
+    "last_updated": "2026-01-22T00:00:00Z",
+    "description": "Motor de Reglas Tekton — Diccionario parametrizado y constantes de entorno (Latido 01)"
+  },
+  "RULES_ENGINE": {
+    "ENTITY_COMPANY": {
+      "status": "locked",
+      "standard_term": "company",
+      "validation_regex": "(?i)company",
+      "violation_action": "error",
+      "forbidden_synonyms": ["empresa", "sociedad", "business_unit"]
+    }
+  },
+  "VALIDATION_LOGIC": {
+    "description": "Comportamiento de scripts Tekton ante violación de términos",
+    "on_forbidden_in_task_name": {
+      "action": "fail",
+      "exit_code": 1,
+      "message": "El nombre de la tarea contiene términos prohibidos. Use el término estándar definido en DICTIONARY.json."
+    },
+    "on_forbidden_in_content": {
+      "action": "error",
+      "report_to": "/Tekton/Logs/judge_audit.json",
+      "terminology_check": "failed"
+    },
+    "scripts_affected": [
+      "Tekton/Tools/Inicio-Tarea.ps1",
+      "Tekton/Tools/Unificar-Rama.ps1",
+      "scripts/validate.ps1",
+      "scripts/validate.sh"
+    ]
+  },
+  "ENVIRONMENT_CONSTANTS": {
+    "description": "Constantes centralizadas (Latido 01). Fuente única para timeouts y puertos.",
+    "app": {
+      "app_port": 5000,
+      "healthcheck_timeout_seconds": 10
+    },
+    "iota": {
+      "node_timeout": 30,
+      "retry_attempts": 3,
+      "retry_delay_seconds": 5
+    },
+    "ansible": {
+      "fact_caching_timeout": 3600
+    }
+  }
+}
