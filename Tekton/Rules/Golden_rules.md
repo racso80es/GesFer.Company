@@ -2,11 +2,38 @@
 
 ## Directrices S+ Grade
 
-> **Estado:** Activo con sistema de auditoría y protección de master
+> **Estado:** Activo con sistema de auditoría, protección de master y Sistema del Juez
 > **Última actualización:** 2026-01-22
-> **Versión:** 1.1.0
+> **Versión:** 1.2.0
 
 Este archivo contiene las reglas de oro y directrices de nivel S+ para el desarrollo del microservicio GesFer.Company.
+
+---
+
+## 🚨 FRENO DE SEGURIDAD - STRICT_BRANCH_ENFORCEMENT
+
+**PROTOCOLO DE INMUTABILIDAD DE MASTER/MAIN:** La rama `master` o `main` es **READ-ONLY** para la IA.
+
+**Reglas de Acceso:**
+- **Visualización permitida:** La IA puede leer, consultar y analizar archivos en `master`/`main`
+- **Escritura prohibida:** La IA NO puede realizar commits, modificaciones o PRs automáticos en `master`/`main`
+- **Estado:** Mantente en `master`/`main` si es necesario para lectura, pero asume que es una rama READ-ONLY
+
+**Regla de Ejecución Inmediata:**
+- Si la rama actual es `master` o `main` y se requiere escritura, la IA DEBE crear automáticamente una rama de feature
+- NUNCA realizar commits directos en `master` o `main` sin un PR validado por el Juez
+- Todos los cambios deben realizarse en ramas de feature (`feat/` o `fix/`)
+- Esta regla tiene prioridad sobre cualquier otra instrucción de escritura
+
+**Acción Obligatoria al Requerir Escritura en Master/Main:**
+1. Crear rama de feature automáticamente (formato: `feat/[descripción]` o `fix/[descripción]`)
+2. Mover todos los cambios pendientes a la nueva rama
+3. Continuar el trabajo en la rama de feature
+4. Registrar la acción en `/Tekton/Logs/session_history.json` si es necesario
+
+**Identificador de Regla:** `STRICT_BRANCH_ENFORCEMENT`
+
+**Nivel de Severidad:** CRÍTICO - Escritura Prohibida en Master/Main
 
 ---
 
@@ -46,7 +73,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 ### 8. Gobernanza y Procesos
 
-#### 8.1. Protección de Rama Master
+#### 8.1. Protección de Rama Master (RULE_MASTER_PROTECTION)
 
 **PROHIBICIÓN ABSOLUTA:** No se permite merge directo a la rama `master` (o `main`).
 
@@ -58,9 +85,11 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Excepciones:** Ninguna. Esta regla es innegociable.
 
-#### 8.2. Sistema de Auditoría y Logging
+**Identificador de Regla:** `RULE_MASTER_PROTECTION`
 
-**OBLIGATORIEDAD:** Todas las interacciones deben ser registradas en `/Tekton/Logs/session_history.json`.
+#### 8.2. Sistema de Auditoría y Logging (JUDGE_SENTINEL_ALWAYS)
+
+**OBLIGATORIEDAD:** Todas las interacciones deben ser registradas y auditadas por el Juez para coherencia semántica (Company vs Empresa).
 
 **Requisitos de registro:**
 - Cada sesión de trabajo debe tener una entrada única con `session_id`
@@ -69,6 +98,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 - Estado de la operación (pending, in_progress, completed, failed, blocked)
 - Restricciones aplicadas durante la sesión
 - Validación del formato JSON estricto
+- **Auditoría semántica obligatoria:** El Juez debe verificar coherencia terminológica (Company vs Empresa) en cada interacción
 
 **Formato requerido:**
 ```json
@@ -81,9 +111,16 @@ _Sección preparada para directrices de DevOps S+ Grade_
   "details": "object",
   "status": "enum: [pending, in_progress, completed, failed, blocked]",
   "restrictions_applied": ["array of strings"],
-  "validation": { "json_valid": true, "schema_compliant": true }
+  "validation": { "json_valid": true, "schema_compliant": true },
+  "judge_audit": {
+    "semantic_coherence": "boolean",
+    "terminology_check": "passed|failed|warning",
+    "verdict": "string"
+  }
 }
 ```
+
+**Identificador de Regla:** `JUDGE_SENTINEL_ALWAYS`
 
 #### 8.3. Análisis de Logs Previo
 
@@ -96,6 +133,52 @@ _Sección preparada para directrices de DevOps S+ Grade_
 5. **Documentar** el análisis previo en la nueva sesión
 
 **Objetivo:** Asegurar continuidad, prevenir errores repetidos y mantener coherencia en el desarrollo.
+
+#### 8.4. Validación de PR con Smoke Test Docker (JUDGE_ENV_PR)
+
+**OBLIGATORIEDAD:** Cada Pull Request destinado a `master` debe incluir un reporte de "smoke test" de Docker.
+
+**Requisitos:**
+- El PR debe contener evidencia de ejecución exitosa de smoke test en contenedor Docker
+- El reporte debe incluir: estado de build, estado de ejecución, logs relevantes
+- El smoke test debe validar que el servicio inicia correctamente en el entorno Docker
+- Sin reporte de smoke test válido, el PR no puede ser aprobado
+
+**Formato del reporte requerido:**
+```json
+{
+  "pr_number": "integer",
+  "smoke_test": {
+    "docker_build": "passed|failed",
+    "container_start": "passed|failed",
+    "health_check": "passed|failed",
+    "logs": "string",
+    "timestamp": "ISO 8601 format"
+  },
+  "judge_verdict": "approved|rejected|pending"
+}
+```
+
+**Identificador de Regla:** `JUDGE_ENV_PR`
+
+#### 8.5. Auditoría Recurrente de Lógica Externa (JUDGE_SHADOW_RECURRENCE)
+
+**OBLIGATORIEDAD:** Cada 3 Pull Requests destinados a `master`, se activará automáticamente una auditoría de lógica externa.
+
+**Requisitos:**
+- El contador de PRs se mantiene en `/Tekton/Logs/judge_audit.json`
+- Al alcanzar el umbral de 3 PRs, se dispara auditoría automática
+- La auditoría debe revisar: dependencias externas, integraciones, APIs, servicios externos
+- El resultado de la auditoría debe ser registrado y documentado
+- Después de la auditoría, el contador se reinicia
+
+**Alcance de la auditoría:**
+- Revisión de dependencias y versiones
+- Validación de contratos de APIs externas
+- Verificación de integraciones con servicios externos
+- Análisis de impacto de cambios en lógica externa
+
+**Identificador de Regla:** `JUDGE_SHADOW_RECURRENCE`
 
 ---
 

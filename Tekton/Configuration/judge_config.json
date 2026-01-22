@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "schema_version": "1.0.0",
+    "created": "2026-01-22T17:30:00Z",
+    "last_updated": "2026-01-22T17:30:00Z",
+    "description": "Configuración del sistema de Juez para gobernanza y auditoría"
+  },
+  "judge_levels": {
+    "level_2": {
+      "level": 2,
+      "name": "Validación de PR y Smoke Test",
+      "trigger": "JUDGE_ENV_PR",
+      "description": "Se activa en cada Pull Request destinado a master",
+      "rules_applied": [
+        "RULE_MASTER_PROTECTION",
+        "JUDGE_ENV_PR"
+      ],
+      "validation_checks": {
+        "pr_required": true,
+        "smoke_test_required": true,
+        "docker_validation": true,
+        "semantic_coherence": false
+      },
+      "output": {
+        "report_location": "/Tekton/Logs/judge_audit.json",
+        "format": "json",
+        "required_fields": [
+          "pr_number",
+          "smoke_test",
+          "judge_verdict",
+          "timestamp"
+        ]
+      }
+    },
+    "level_3": {
+      "level": 3,
+      "name": "Auditoría Semántica y Coherencia",
+      "trigger": "JUDGE_SENTINEL_ALWAYS",
+      "description": "Se activa en cada interacción para verificar coherencia semántica (Company vs Empresa)",
+      "rules_applied": [
+        "JUDGE_SENTINEL_ALWAYS"
+      ],
+      "validation_checks": {
+        "pr_required": false,
+        "smoke_test_required": false,
+        "docker_validation": false,
+        "semantic_coherence": true,
+        "terminology_check": true
+      },
+      "output": {
+        "report_location": "/Tekton/Logs/judge_audit.json",
+        "format": "json",
+        "required_fields": [
+          "session_id",
+          "semantic_coherence",
+          "terminology_check",
+          "verdict",
+          "timestamp"
+        ]
+      }
+    },
+    "level_4": {
+      "level": 4,
+      "name": "Auditoría Recurrente de Lógica Externa",
+      "trigger": "JUDGE_SHADOW_RECURRENCE",
+      "description": "Se activa automáticamente cada 3 Pull Requests destinados a master",
+      "rules_applied": [
+        "JUDGE_SHADOW_RECURRENCE"
+      ],
+      "validation_checks": {
+        "pr_required": true,
+        "smoke_test_required": false,
+        "docker_validation": false,
+        "semantic_coherence": false,
+        "external_logic_audit": true,
+        "dependencies_review": true,
+        "api_contracts_validation": true,
+        "external_services_integration": true
+      },
+      "threshold": {
+        "pr_count": 3,
+        "reset_after_audit": true
+      },
+      "output": {
+        "report_location": "/Tekton/Logs/judge_audit.json",
+        "format": "json",
+        "required_fields": [
+          "audit_id",
+          "trigger_pr_count",
+          "external_logic_review",
+          "dependencies_analysis",
+          "api_contracts_status",
+          "external_services_status",
+          "verdict",
+          "timestamp"
+        ]
+      }
+    }
+  },
+  "dispatchers": {
+    "on_pr_created": {
+      "levels_activated": [2],
+      "conditions": {
+        "target_branch": "master",
+        "auto_trigger": true
+      }
+    },
+    "on_interaction": {
+      "levels_activated": [3],
+      "conditions": {
+        "all_interactions": true,
+        "auto_trigger": true
+      }
+    },
+    "on_pr_threshold": {
+      "levels_activated": [4],
+      "conditions": {
+        "pr_count": 3,
+        "target_branch": "master",
+        "auto_trigger": true,
+        "reset_counter": true
+      }
+    }
+  },
+  "strict_validation": {
+    "json_schema_enforcement": true,
+    "required_fields_validation": true,
+    "type_checking": true,
+    "null_values_allowed": false
+  }
+}
