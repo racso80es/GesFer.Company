@@ -263,7 +263,16 @@ try {
     Write-TaeInfo "Auditoría registrada en docs/audits/tae_closures.json (Latido: $stamp)."
 
     Write-TaeStep "Unificación completada."
-    Invoke-WriteTaeResult -Success $true -CorrelationId $stamp -MergeDetails @{ from = $Branch; to = $Target; commit = $mergeCommit } -Cleanup $cleanupStatus -NextStep "Ready for next beat"
+    
+    # Llamada directa a Write-TaeResult.ps1 para telemetría
+    $ResultData = @{
+        merge_details = @{ from = $Branch; to = $Target; commit = $mergeCommit }
+        cleanup = $cleanupStatus
+        next_step = "Ready for next beat"
+    }
+    $writeTaeResultPath = Join-Path (Join-Path (Join-Path $root "Tekton") "Tools") "Write-TaeResult.ps1"
+    & $writeTaeResultPath -SourceTool "Unificar-Rama" -Status "Success" -Payload $ResultData -AuditStamp $stamp
+    
     exit 0
 }
 catch {
