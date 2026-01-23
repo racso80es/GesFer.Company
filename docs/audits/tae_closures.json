@@ -2,7 +2,7 @@
     "metadata":  {
                      "description":  "Registro de cierres TAE (Unificar-Rama) vinculados al Latido actual",
                      "version":  "1.0.0",
-                     "last_updated":  "2026-01-23T08:37:43.9454673+01:00"
+                     "last_updated":  "2026-01-23T09:34:21.7706380+01:00"
                  },
     "closures":  [
                      {
@@ -56,6 +56,19 @@
                          "cleanup":  "completed",
                          "audit_stamp":  "LATIDO_03_NORMALIZACION_LOGS",
                          "latido":  "LATIDO_03_NORMALIZACION_LOGS"
+                     },
+                     {
+                         "closure_id":  "LATIDO_20260123_093331",
+                         "approve_hash":  "S-GRADE_PROTOCOLS_READY",
+                         "timestamp":  "2026-01-23T09:34:21.6957033+01:00",
+                         "merge_details":  {
+                                               "from":  "feat/tae-protocol-splus",
+                                               "to":  "main",
+                                               "commit":  "ac01b231803e28a47464472fcb6699c8cb4e89ae"
+                                           },
+                         "cleanup":  "completed",
+                         "audit_stamp":  "LATIDO_20260123_093331",
+                         "latido":  "LATIDO_20260123_093331"
                      }
                  ]
 }
