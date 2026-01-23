@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-01-22T00:00:00Z",
+    "description": "Manifiesto de metadatos para la herramienta TAE Unificar-Rama"
+  },
+  "tool": {
+    "id": "unificar-rama",
+    "name": "Unificar-Rama",
+    "script": "Storage/Tekton/Tools/Unificar-Rama.ps1",
+    "type": "powershell",
+    "purpose": "Unificación de ramas TAE: merge atómico a target, push, limpieza y registro en docs/audits/",
+    "parameters": [
+      { "name": "Branch", "required": false, "default": "rama actual", "description": "Rama origen" },
+      { "name": "Target", "required": false, "default": "master", "description": "Rama destino" },
+      { "name": "AuditStamp", "required": false, "description": "Sello de auditoría / Latido" },
+      { "name": "ApproveHash", "required": false, "description": "Hash de validación del Juez" }
+    ],
+    "output": "JSON (success, correlation_id, merge_details, cleanup, next_step)",
+    "validation": "Pre-check git clean, branch sync; valida con DICTIONARY.json (futuro)"
+  }
+}

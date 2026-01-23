@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "tool_id": "TAE-004-SYNC",
+  "name": "Sync-Latido",
+  "version": "1.1.0",
+  "description": "Herramienta de integridad absoluta. Sincronización final con el Almacén y la Nube (Protocolo S+ TAE - Fase 4).",
+  "parameters": {
+    "AuditStamp": "Sello de auditoría / Latido (requerido)"
+  },
+  "safety_checks": [
+    "vision_md_validation",
+    "git_clean_status",
+    "branch_sync_check"
+  ],
+  "standard": "S-Grade-TAE",
+  "metadata": {
+    "script": "Storage/Tekton/Tools/Sync-Latido.ps1",
+    "type": "powershell",
+    "created": "2026-01-22T00:00:00Z",
+    "last_updated": "2026-01-23T00:10:00Z",
+    "output_format": "JSON (via Write-TaeResult.ps1)",
+    "validation_logic": "Valida Vision.md, refactoriza herramientas si es necesario, consolida cambios, limpia ramas, sincroniza con origin/main",
+    "observability": [
+      "[SYNC-LATIDO-STEP] Validación",
+      "[SYNC-LATIDO-STEP] Evolución",
+      "[SYNC-LATIDO-STEP] Consolidación",
+      "[SYNC-LATIDO-STEP] Saneamiento",
+      "[SYNC-LATIDO-STEP] Sincronización",
+      "[SYNC-LATIDO-STEP] Certificación"
+    ],
+    "requires": ["Vision.md"]
+  }
+}
