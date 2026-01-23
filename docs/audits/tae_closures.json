@@ -2,7 +2,7 @@
     "metadata":  {
                      "description":  "Registro de cierres TAE (Unificar-Rama) vinculados al Latido actual",
                      "version":  "1.0.0",
-                     "last_updated":  "2026-01-23T09:34:21.7706380+01:00"
+                     "last_updated":  "2026-01-23T21:55:11.9123344+01:00"
                  },
     "closures":  [
                      {
@@ -69,6 +69,19 @@
                          "cleanup":  "completed",
                          "audit_stamp":  "LATIDO_20260123_093331",
                          "latido":  "LATIDO_20260123_093331"
+                     },
+                     {
+                         "closure_id":  "LATIDO_20260123_215349",
+                         "approve_hash":  "",
+                         "timestamp":  "2026-01-23T21:55:11.8376301+01:00",
+                         "merge_details":  {
+                                               "from":  "feat/tekton-governance-infrastructure",
+                                               "to":  "main",
+                                               "commit":  "03e90dc18aab37c148366ca737bfe405160b18de"
+                                           },
+                         "cleanup":  "completed",
+                         "audit_stamp":  "LATIDO_20260123_215349",
+                         "latido":  "LATIDO_20260123_215349"
                      }
                  ]
 }
