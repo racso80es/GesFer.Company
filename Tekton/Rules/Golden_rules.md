@@ -122,19 +122,8 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `JUDGE_SENTINEL_ALWAYS`
 
-#### 8.3. Análisis de Logs Previo
 
-**INSTRUCCIÓN OBLIGATORIA:** Antes de iniciar tareas complejas, la IA debe:
-
-1. **Leer y analizar** los últimos registros en `/Tekton/Logs/session_history.json`
-2. **Identificar** patrones, errores previos o restricciones aplicadas
-3. **Consultar** el historial de sesiones relacionadas con la tarea actual
-4. **Verificar** que no haya conflictos con acciones previas
-5. **Documentar** el análisis previo en la nueva sesión
-
-**Objetivo:** Asegurar continuidad, prevenir errores repetidos y mantener coherencia en el desarrollo.
-
-#### 8.4. Validación de PR con Smoke Test Docker (JUDGE_ENV_PR)
+#### 8.3. Validación de PR con Smoke Test Docker (JUDGE_ENV_PR)
 
 **OBLIGATORIEDAD:** Cada Pull Request destinado a `master` debe incluir un reporte de "smoke test" de Docker.
 
@@ -161,7 +150,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `JUDGE_ENV_PR`
 
-#### 8.5. Auditoría Recurrente de Lógica Externa (JUDGE_SHADOW_RECURRENCE)
+#### 8.4. Auditoría Recurrente de Lógica Externa (JUDGE_SHADOW_RECURRENCE)
 
 **OBLIGATORIEDAD:** Cada 3 Pull Requests destinados a `master`, se activará automáticamente una auditoría de lógica externa.
 
@@ -180,7 +169,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `JUDGE_SHADOW_RECURRENCE`
 
-#### 8.6. Sistema del Triunvirato - Leyes del Auditor
+#### 8.5. Sistema del Triunvirato - Leyes del Auditor
 
 **ESTADO:** Activo - Leyes Inmutables del Triunvirato
 
@@ -289,7 +278,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `AUDITOR_VOICE`
 
-#### 8.7. Protocolo de Ingesta - Integridad del Almacén (STORAGE_INTEGRITY)
+#### 8.6. Protocolo de Ingesta - Integridad del Almacén (STORAGE_INTEGRITY)
 
 **OBLIGATORIEDAD:** Tormentosa debe leer los archivos de `/Storage` para procesar audios, pero el Auditor solo certificará sus **hashes**, nunca su contenido binario.
 
@@ -300,7 +289,7 @@ _Sección preparada para directrices de DevOps S+ Grade_
 
 **Identificador de Regla:** `STORAGE_INTEGRITY`
 
-#### 8.8. Protocolo de Tareas Complejas y Routing de Acciones (COMPLEX_TASK_PROTOCOL)
+#### 8.7. Protocolo de Tareas Complejas y Routing de Acciones (COMPLEX_TASK_PROTOCOL)
 
 **OBLIGATORIEDAD:** Todas las tareas complejas deben seguir el circuito de obligado cumplimiento definido en `/Storage/Tekton/Actions/Tarea-Compleja.template.md`.
 
