@@ -40,6 +40,9 @@ Thumbs.db
 # Storage (Almacén Local - Tormentosa)
 # Audios, backups de identidad y assets grandes; nunca se suben al repositorio
 /Storage/
+# Excepción: Herramientas TAE deben estar versionadas (Protocolo S+)
+!/Storage/Tekton/
+!/Storage/Tekton/**/*
 
 # Sesión temporal y caché
 .tmp.driveupload/

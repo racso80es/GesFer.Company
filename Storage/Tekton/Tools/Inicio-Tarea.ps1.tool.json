@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "tool_id": "TAE-001-START",
+  "name": "Inicio-Tarea",
+  "version": "1.1.0",
+  "description": "Orquestador de arranque de ramas con validación de diccionario y creación de diagnóstico.",
+  "parameters": {
+    "TaskName": "Nombre técnico de la tarea (slug)",
+    "BaseBranch": "Rama base para crear la nueva rama (default: main)",
+    "Simulate": "Boolean - Ejecuta validación sin crear rama"
+  },
+  "safety_checks": [
+    "dictionary_validation",
+    "git_clean_status",
+    "branch_existence_check"
+  ],
+  "standard": "S-Grade-TAE",
+  "metadata": {
+    "script": "Storage/Tekton/Tools/Inicio-Tarea.ps1",
+    "type": "powershell",
+    "created": "2026-01-22T00:00:00Z",
+    "last_updated": "2026-01-23T00:05:00Z",
+    "output_format": "JSON (success, branch, diagnostics_path, actual_md_path, dictionary_used, validation)",
+    "validation_logic": "Carga DICTIONARY.json; falla si TaskName contiene forbidden_synonyms (ENTITY_COMPANY)",
+    "observability": [
+      "[TAE-STEP] creación de rama",
+      "[TAE-STEP] carpeta de diagnóstico",
+      "[TAE-STEP] inicialización actual.md"
+    ]
+  }
+}
