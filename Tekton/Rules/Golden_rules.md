@@ -3,8 +3,8 @@
 ## Directrices S+ Grade
 
 > **Estado:** Activo con sistema de auditoría, protección de master, Sistema del Juez y Triunvirato
-> **Última actualización:** 2026-01-22
-> **Versión:** 1.3.0
+> **Última actualización:** 2026-01-23
+> **Versión:** 1.4.0
 
 Este archivo contiene las reglas de oro y directrices de nivel S+ para el desarrollo del microservicio GesFer.Company.
 
@@ -299,6 +299,48 @@ _Sección preparada para directrices de DevOps S+ Grade_
 - **Almacén local:** `/Storage` está excluido del repositorio (`.gitignore`). Estructura: `/Storage/Audios`, `/Storage/Identity_Backups`, `/Storage/Large_Assets`.
 
 **Identificador de Regla:** `STORAGE_INTEGRITY`
+
+#### 8.8. Protocolo de Tareas Complejas y Routing de Acciones (COMPLEX_TASK_PROTOCOL)
+
+**OBLIGATORIEDAD:** Todas las tareas complejas deben seguir el circuito de obligado cumplimiento definido en `/Storage/Tekton/Actions/Tarea-Compleja.template.md`.
+
+**Requisitos:**
+
+1. **Detección de intención:**
+   - La IA debe consultar `/Storage/Tekton/Configuration/Actions_Router.json` cuando detecte intenciones relacionadas con tareas complejas
+   - Patrones de intención: "vamos a empezar una tarea compleja", "iniciar tarea compleja", "empezar tarea compleja", etc.
+   - Al detectar estos patrones, la IA DEBE leer y seguir el template de tarea compleja
+
+2. **Seguimiento del circuito:**
+   - **PASO 0:** Verificar estado base (git status limpio)
+   - **PASO 1:** Ejecutar `Inicio-Tarea.ps1` y definir "Kaizen del día"
+   - **PASO 2:** Desarrollo con validación de compilación y registro de hitos con `Write-TaeResult.ps1`
+   - **PASO 3:** Ejecutar `Close-Task.ps1` para cierre técnico
+   - **PASO 4:** Ejecutar `Sync-Latido.ps1` y actualizar `activity_stream.jsonl`
+
+3. **Reporte de fase obligatorio:**
+   - La IA debe reportar en cada respuesta la fase actual del circuito
+   - Formato: `[FASE: PASO X - Nombre del Paso]`
+   - Estado: `[En curso | Completado | Bloqueado]`
+
+4. **Bloqueo activo:**
+   - La IA debe actuar como bloqueador si se intenta:
+     - Commit sin haber pasado por PASO 1
+     - Commit de código que no compila
+     - Push sin haber registrado hitos intermedios
+     - Merge/unificar sin haber pasado por PASO 3
+     - Cerrar tarea sin haber pasado por PASO 4
+
+5. **Actions_Router.json:**
+   - El archivo `/Storage/Tekton/Configuration/Actions_Router.json` contiene el mapeo de intenciones a acciones
+   - Debe ser consultado para determinar qué protocolo aplicar según la intención del usuario
+   - Las definiciones de protocolos tienen precedencia sobre acciones individuales
+
+**Excepciones:** Ninguna. Este protocolo es de obligado cumplimiento para todas las tareas complejas.
+
+**Identificador de Regla:** `COMPLEX_TASK_PROTOCOL`
+
+**Nivel de Severidad:** CRÍTICO - Protocolo Obligatorio para Tareas Complejas
 
 ---
 
