@@ -2,7 +2,7 @@
     "metadata":  {
                      "description":  "Registro de cierres TAE (Unificar-Rama) vinculados al Latido actual",
                      "version":  "1.0.0",
-                     "last_updated":  "2026-01-23T21:55:11.9123344+01:00"
+                     "last_updated":  "2026-01-24T07:14:13.4757934+01:00"
                  },
     "closures":  [
                      {
@@ -82,6 +82,19 @@
                          "cleanup":  "completed",
                          "audit_stamp":  "LATIDO_20260123_215349",
                          "latido":  "LATIDO_20260123_215349"
+                     },
+                     {
+                         "closure_id":  "DOCKER_API_READY",
+                         "approve_hash":  "",
+                         "timestamp":  "2026-01-24T07:14:13.3897347+01:00",
+                         "merge_details":  {
+                                               "from":  "feat/docker-minimal-api-syncaudios",
+                                               "to":  "main",
+                                               "commit":  "90edf2eecd53f875cf90e28b98064376d2685e65"
+                                           },
+                         "cleanup":  "completed",
+                         "audit_stamp":  "DOCKER_API_READY",
+                         "latido":  "DOCKER_API_READY"
                      }
                  ]
 }
