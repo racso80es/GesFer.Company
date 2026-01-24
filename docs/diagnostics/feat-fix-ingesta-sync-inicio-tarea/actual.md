@@ -76,7 +76,7 @@ Corregir la integración del script Ingesta_Audio.ps1 con la Minimal API y robus
 
 ## Cierre
 
-**AuditStamp:** LATIDO_FIX_INGESTA_INICIO_20260124  
+**AuditStamp:** LATIDO_VOLUMENES_REALES_20260124
 **Fecha de cierre:** 2026-01-24
 
 Tarea validada y lista para unificaciÃ³n con Unificar-Rama.ps1.
