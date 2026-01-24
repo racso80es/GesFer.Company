@@ -2,7 +2,7 @@
     "metadata":  {
                      "description":  "Registro de cierres TAE (Unificar-Rama) vinculados al Latido actual",
                      "version":  "1.0.0",
-                     "last_updated":  "2026-01-24T07:14:13.4757934+01:00"
+                     "last_updated":  "2026-01-24T07:38:35.2875030+01:00"
                  },
     "closures":  [
                      {
@@ -95,6 +95,19 @@
                          "cleanup":  "completed",
                          "audit_stamp":  "DOCKER_API_READY",
                          "latido":  "DOCKER_API_READY"
+                     },
+                     {
+                         "closure_id":  "LATIDO_VOLUMENES_REALES_20260124",
+                         "approve_hash":  "",
+                         "timestamp":  "2026-01-24T07:38:35.2017891+01:00",
+                         "merge_details":  {
+                                               "from":  "feat/fix-ingesta-sync-inicio-tarea",
+                                               "to":  "main",
+                                               "commit":  "311500ac662c570b43fd55b08eb4bc5c191ea9d7"
+                                           },
+                         "cleanup":  "completed",
+                         "audit_stamp":  "LATIDO_VOLUMENES_REALES_20260124",
+                         "latido":  "LATIDO_VOLUMENES_REALES_20260124"
                      }
                  ]
 }
