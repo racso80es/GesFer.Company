@@ -4,7 +4,7 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar logging personalizado hacia activity_stream.jsonl
-var storagePath = Environment.GetEnvironmentVariable("STORAGE_PATH") ?? "/app/storage";
+var storagePath = Environment.GetEnvironmentVariable("STORAGE_PATH") ?? "/storage";
 var activityStreamPath = Path.Combine(storagePath, "Tekton", "Logs", "activity_stream.jsonl");
 
 builder.Services.AddSingleton<IActivityLogger>(sp =>
@@ -21,6 +21,8 @@ app.MapGet("/", () => new
     endpoint = "/SyncAudios"
 });
 
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
 // Endpoint principal: SyncAudios
 app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLogger) =>
 {
@@ -31,8 +33,8 @@ app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLog
     {
         appLogger.LogInformation("Iniciando sincronización de audios...");
 
-        // Ruta al script en el almacén
-        var scriptPath = Path.Combine(storagePath, "Scripts", "Ingesta_Audio.ps1");
+        // Ruta al script en el almacén: /storage/Tekton/Tools/Ingesta_Audio.ps1
+        var scriptPath = Path.Combine(storagePath, "Tekton", "Tools", "Ingesta_Audio.ps1");
 
         if (!File.Exists(scriptPath))
         {
@@ -66,6 +68,7 @@ app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLog
             CreateNoWindow = true
         };
 
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         using var process = Process.Start(processStartInfo);
         if (process == null)
         {
@@ -76,6 +79,7 @@ app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLog
         var error = await process.StandardError.ReadToEndAsync();
 
         await process.WaitForExitAsync();
+        sw.Stop();
 
         var success = process.ExitCode == 0;
         var status = success ? "Success" : "Failure";
@@ -95,7 +99,7 @@ app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLog
                 exit_code = process.ExitCode,
                 output = output.Trim(),
                 error = error.Trim(),
-                execution_time_ms = process.ExitTime.Subtract(process.StartTime).TotalMilliseconds
+                execution_time_ms = sw.Elapsed.TotalMilliseconds
             }
         });
 

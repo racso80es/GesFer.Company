@@ -1,3 +1,5 @@
+# Fase 2: Infraestructura de Contenedores
+# Monta ./src/Tormentosa.Api en /src y almacén de herramientas en /storage
 services:
   gesfer-company:
     build:
@@ -5,23 +7,23 @@ services:
       dockerfile: Dockerfile
     container_name: gesfer-company
     ports:
-      - "${APP_PORT:-5000}:${APP_PORT:-5000}"
+      - "${APP_PORT:-5000}:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
-      - ASPNETCORE_URLS=http://+:${APP_PORT:-5000}
-      - STORAGE_PATH=/app/storage
+      - ASPNETCORE_URLS=http://+:5000
+      - STORAGE_PATH=/storage
+    volumes:
+      - ./src/Tormentosa.Api:/src
+      - ./Storage:/storage
     networks:
       - gesfer-network
-    volumes:
-      - ./logs:/app/logs
-      - ./Storage:/app/storage
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-5000}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
 
 networks:
   gesfer-network:
