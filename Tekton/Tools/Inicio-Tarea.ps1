@@ -155,30 +155,46 @@ try {
     $actualPath = Join-Path $diagPath "actual.md"
 
     Write-TaeStep "Creación de rama: $branchName desde $BaseBranch."
-    git fetch origin 2>$null | Out-Null
-    $baseExists = git rev-parse --verify $BaseBranch 2>$null
-    if (-not $baseExists) {
-        $baseExists = git rev-parse --verify "origin/$BaseBranch" 2>$null
-        if ($baseExists) {
-            git checkout -b $branchName "origin/$BaseBranch" 2>$null
-        } else {
+    $gitErrPref = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $branchCreateOk = $false
+    try {
+        git fetch origin 2>$null | Out-Null
+        $baseRef = $null
+        if (git rev-parse --verify $BaseBranch 2>$null) { $baseRef = $BaseBranch }
+        if (-not $baseRef -and (git rev-parse --verify "origin/$BaseBranch" 2>$null)) { $baseRef = "origin/$BaseBranch" }
+        if (-not $baseRef) {
             Write-TaeInfo "Rama base '$BaseBranch' no existe."
             Out-InicioJsonResult -Success $false -ErrorMessage "Base branch '$BaseBranch' not found"
             exit 1
         }
-    } else {
-        git checkout -b $branchName $BaseBranch 2>$null
-    }
-    if ($LASTEXITCODE -ne 0) {
-        $existing = git rev-parse --verify $branchName 2>$null
-        if ($existing) {
-            git checkout $branchName 2>$null
-            Write-TaeInfo "Rama '$branchName' ya existe; se usará la actual."
+        git checkout -b $branchName $baseRef 2>$null | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            $branchCreateOk = $true
         } else {
-            Write-TaeInfo "No se pudo crear o cambiar a la rama '$branchName'."
-            Out-InicioJsonResult -Success $false -ErrorMessage "Failed to create or checkout branch '$branchName'"
-            exit 1
+            $existing = git rev-parse --verify $branchName 2>$null
+            if ($existing) {
+                git checkout $branchName 2>$null | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-TaeInfo "Rama '$branchName' ya existe; se usará la actual."
+                    $branchCreateOk = $true
+                }
+            }
         }
+    } catch {
+        $branchExists = git rev-parse --verify $branchName 2>$null
+        $onBranch = (git branch --show-current 2>$null) -eq $branchName
+        if ($branchExists -and $onBranch) {
+            Write-TaeInfo "Rama '$branchName' ya existe; se usará la actual."
+            $branchCreateOk = $true
+        }
+    } finally {
+        $ErrorActionPreference = $gitErrPref
+    }
+    if (-not $branchCreateOk) {
+        Write-TaeInfo "No se pudo crear o cambiar a la rama '$branchName'."
+        Out-InicioJsonResult -Success $false -ErrorMessage "Failed to create or checkout branch '$branchName'"
+        exit 1
     }
     Write-TaeInfo "Rama activa: $branchName."
 
