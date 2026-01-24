@@ -1,5 +1,5 @@
 # Fase 2: Infraestructura de Contenedores
-# Monta ./src/Tormentosa.Api en /src y almacén de herramientas en /storage
+# Monta ./src/Tormentosa.Api en /src y Almacén en /storage (obligatorio para Ingesta_Audio.ps1)
 services:
   gesfer-company:
     build:
@@ -14,6 +14,7 @@ services:
       - STORAGE_PATH=/storage
     volumes:
       - ./src/Tormentosa.Api:/src
+      # Almacén montado en /storage: script /storage/Tekton/Tools/Ingesta_Audio.ps1
       - ./Storage:/storage
     networks:
       - gesfer-network
