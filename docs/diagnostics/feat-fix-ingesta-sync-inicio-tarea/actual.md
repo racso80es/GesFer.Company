@@ -68,6 +68,10 @@ Corregir la integración del script Ingesta_Audio.ps1 con la Minimal API y robus
 - `docker exec gesfer-company curl -s http://localhost:5000/health` → `{"status":"healthy"}`
 - `docker exec gesfer-company curl -s http://localhost:5000/SyncAudios` → 200/400 según script; ruta `/storage/Tekton/Tools/Ingesta_Audio.ps1` en uso. Error "Origen no encontrado" esperado en Linux (Downloads).
 
+### Verificación success: true automático
+
+- Ejecutado `Inicio-Tarea.ps1 -TaskName "verify-inicio-auto-success"` desde `feat/fix-ingesta-sync-inicio-tarea` (script refactorizado). Resultado: `exit 0`, JSON `"success": true` sin intervención manual.
+
 ---
 
 ## Cierre
