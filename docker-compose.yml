@@ -9,10 +9,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
       - ASPNETCORE_URLS=http://+:${APP_PORT:-5000}
+      - STORAGE_PATH=/app/storage
     networks:
       - gesfer-network
     volumes:
       - ./logs:/app/logs
+      - ./Storage:/app/storage
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-5000}/health"]
