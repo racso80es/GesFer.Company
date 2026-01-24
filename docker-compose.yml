@@ -16,6 +16,8 @@ services:
       - ./src/Tormentosa.Api:/src
       # Almacén montado en /storage: script /storage/Tekton/Tools/Ingesta_Audio.ps1
       - ./Storage:/storage
+      # Grabaciones: origen para Ingesta_Audio.ps1 (-Origen /grabaciones)
+      - "C:/Users/Racso/Documents/Grabaciones de sonido:/grabaciones"
     networks:
       - gesfer-network
     restart: unless-stopped

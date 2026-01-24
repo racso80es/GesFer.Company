@@ -57,11 +57,15 @@ app.MapGet("/SyncAudios", async (IActivityLogger logger, ILogger<Program> appLog
             return Results.NotFound(new { error = errorMsg, scriptPath });
         }
 
-        // Ejecutar script PowerShell
+        // Parámetros: -Origen /grabaciones, -Destino /storage/Audios
+        var origen = "/grabaciones";
+        var destino = Path.Combine(storagePath, "Audios");
+        var scriptArgs = $"-File \"{scriptPath}\" -Origen \"{origen}\" -Destino \"{destino}\"";
+
         var processStartInfo = new ProcessStartInfo
         {
             FileName = "pwsh",
-            Arguments = $"-File \"{scriptPath}\"",
+            Arguments = scriptArgs,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
